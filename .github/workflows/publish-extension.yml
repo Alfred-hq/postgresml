@@ -1,4 +1,4 @@
-name: Publish multiarch images on ghcr.io
+name: Publish extension multiarch images on ghcr.io
 on:
   push:
     tags:
@@ -6,11 +6,11 @@ on:
 
 env:
   REGISTRY: alfredcapital
-  IMAGE_NAME: pgml-dashboard
+  IMAGE_NAME: pgml-extension
 
 jobs:
   publish:
-    name: Build and push PostgresML multiarch images
+    name: Build and push PostgresML Extentsion multiarch images
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -30,9 +30,9 @@ jobs:
     - name: Install flake8 and docker-compose
       run: python -m pip install flake8 docker-compose==1.17.1
 
-    - name: Derive pgml-dashboard image name
+    - name: Derive pgml-extension image name
       id: image
-      working-directory: pgml-dashboard
+      working-directory: pgml-extension
       run: |
         IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${GITHUB_REF/refs\/tags\//}"
         echo "NAME=$IMAGE" >> $GITHUB_OUTPUT
@@ -52,7 +52,7 @@ jobs:
     - name: Build and export to local docker for testing
       uses: docker/build-push-action@v3
       with:
-        context: "pgml-dashboard/"
+        context: "pgml-extension/"
         load: true
         tags: ${{ steps.image.outputs.NAME }}
         cache-to: type=gha,mode=max
@@ -60,7 +60,7 @@ jobs:
     - name: Build arm64 additionaly and push multiarch image to ghcr
       uses: docker/build-push-action@v3
       with:
-        context: "pgml-dashboard/"
+        context: "pgml-extension/"
         push: true
         tags: "${{ steps.image.outputs.NAME }}"
         platforms: linux/amd64,linux/arm64
