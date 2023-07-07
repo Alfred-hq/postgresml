@@ -74,6 +74,8 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-k
     apt-get install -y postgresql-14 && \
     apt-get install -y postgresql-plpython3-14
 
+RUN apt-get install -y gosu
+
 RUN	apt-get install -y --no-install-recommends postgresql-common; \
 	sed -ri 's/#(create_main_cluster) .*$/\1 = false/' /etc/postgresql-common/createcluster.conf;
 
