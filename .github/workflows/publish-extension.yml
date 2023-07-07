@@ -30,7 +30,7 @@ jobs:
       id: image
       working-directory: pgml-extension
       run: |
-        IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:lates-${{matrix.runs-on}}"
+        IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
         echo "NAME=$IMAGE" >> $GITHUB_OUTPUT
 
     - name: Set up Docker Buildx

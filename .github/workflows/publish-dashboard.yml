@@ -30,7 +30,7 @@ jobs:
       id: image
       working-directory: pgml-dashboard
       run: |
-        IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${{ matrix.os }}"
+        IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
         echo "NAME=$IMAGE" >> $GITHUB_OUTPUT
 
     - name: Set up Docker Buildx
