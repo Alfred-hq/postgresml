@@ -97,8 +97,6 @@ VOLUME /var/lib/postgresql/data
 
 COPY docker/docker-entrypoint.sh /usr/local/bin/
 
-STOPSIGNAL SIGINT
-
 # PostgresML
 RUN echo "deb [trusted=yes] https://apt.postgresml.org $(lsb_release -cs) main" >> /etc/apt/sources.list
 RUN cat /etc/apt/sources.list
@@ -114,12 +112,26 @@ RUN pip3 install -r requirements-xformers.txt --no-dependencies
 COPY . /app
 # Listen on 0.0.0.0 and allow 'root' to connect without a password.
 # Please modify for production deployments accordingly.
-RUN cp /app/docker/postgresql.conf /etc/postgresql/14/main/postgresql.conf
-RUN cp /app/docker/pg_hba.conf /etc/postgresql/14/main/pg_hba.conf
+# RUN cp /app/docker/postgresql.conf /etc/postgresql/14/main/postgresql.conf
+# RUN cp /app/docker/pg_hba.conf /etc/postgresql/14/main/pg_hba.conf
 RUN cd /tmp && \
     git clone --branch v0.4.1 https://github.com/pgvector/pgvector.git && \
     cd pgvector && \
     make && \
     make install
 
-ENTRYPOINT ["/bin/bash", "/app/docker/entrypoint.sh"]
+ENTRYPOINT ["docker-entrypoint.sh"]
+
+STOPSIGNAL SIGINT
+#
+# An additional setting that is recommended for all users regardless of this
+# value is the runtime "--stop-timeout" (or your orchestrator/runtime's
+# equivalent) for controlling how long to wait between sending the defined
+# STOPSIGNAL and sending SIGKILL (which is likely to cause data corruption).
+#
+# The default in most runtimes (such as Docker) is 10 seconds, and the
+# documentation at https://www.postgresql.org/docs/12/server-start.html notes
+# that even 90 seconds may not be long enough in many instances.
+
+EXPOSE 5432
+CMD ["postgres"]
