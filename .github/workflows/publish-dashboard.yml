@@ -12,7 +12,10 @@ env:
 jobs:
   publish:
     name: Build and push PostgresML dashboard multiarch images
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: ["ubuntu-22.04", "buildjet-4vcpu-ubuntu-2204-arm"]
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: 'read'
       packages: 'write'
